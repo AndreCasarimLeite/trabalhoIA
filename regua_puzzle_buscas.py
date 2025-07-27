@@ -1,12 +1,13 @@
 import sys
 import argparse
+import random
 from regua_puzzle_problema import ReguaPuzzle, heuristica_misplaced, heuristica_distancia
 from estatisticas import Estatisticas
-from busca_backtracking import backtracking
+#from busca_backtracking import backtracking
 from busca_largura import busca_largura
 from busca_profundidade_limitada import busca_profundidade_limitada
 from busca_ordenada import busca_ordenada
-from busca_gulosa import busca_gulosa
+#from busca_gulosa import busca_gulosa
 from busca_a_estrela import busca_a_estrela
 from busca_ida_estrela import busca_ida_estrela
 
@@ -34,6 +35,16 @@ def ler_estado_arquivo(caminho):
 def parse_estado_string(s):
     return s.strip().split()
 
+def gerar_estado_inicial(N):
+    """Gera o estado inicial embaralhado baseado no valor de N.
+    Cria um estado com N Bs, N As e um '-', mas embaralhado para não ser a solução.
+    Ex: N=2 -> pode gerar ['A', 'B', '-', 'B', 'A']
+    """
+    # Criar lista com N Bs, N As e um '-'
+    estado = ['B'] * N + ['A'] * N + ['-']
+    random.shuffle(estado)
+    return estado
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Régua-Puzzle - Algoritmos de Busca")
     parser.add_argument('-a', '--algoritmo', type=str, default='tudo',
@@ -53,7 +64,7 @@ if __name__ == "__main__":
     elif args.estado:
         estado_inicial = parse_estado_string(args.estado)
     else:
-        estado_inicial = ['B', 'A', '-', 'A', 'B']
+        estado_inicial = gerar_estado_inicial(N)
 
     puzzle = ReguaPuzzle(estado_inicial, N)
 
@@ -64,11 +75,11 @@ if __name__ == "__main__":
     heuristica = heuristicas.get(args.heuristica, heuristica_misplaced)
 
     algoritmos = {
-        'backtracking': ("Backtracking", lambda: backtracking(puzzle, limite=20)),
+        #'backtracking': ("Backtracking", lambda: backtracking(puzzle, limite=20)),
         'largura': ("Busca em Largura (BFS)", lambda: busca_largura(puzzle)),
         'profundidade': ("Busca em Profundidade Limitada", lambda: busca_profundidade_limitada(puzzle, limite=20)),
         'ordenada': ("Busca Ordenada (Uniform Cost)", lambda: busca_ordenada(puzzle)),
-        'gulosa': ("Busca Gulosa", lambda: busca_gulosa(puzzle, heuristica=heuristica)),
+        #'gulosa': ("Busca Gulosa", lambda: busca_gulosa(puzzle, heuristica=heuristica)),
         'astar': ("Busca A*", lambda: busca_a_estrela(puzzle, heuristica=heuristica)),
         'idastar': ("Busca IDA*", lambda: busca_ida_estrela(puzzle, heuristica=heuristica)),
     }
