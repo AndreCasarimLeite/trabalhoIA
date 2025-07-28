@@ -3,7 +3,7 @@ import argparse
 import random
 from regua_puzzle_problema import ReguaPuzzle, heuristica_misplaced, heuristica_distancia
 from estatisticas import Estatisticas
-#from busca_backtracking import backtracking
+from busca_backtracking import backtracking
 from busca_largura import busca_largura
 from busca_profundidade_limitada import busca_profundidade_limitada
 from busca_ordenada import busca_ordenada
@@ -75,7 +75,7 @@ if __name__ == "__main__":
     heuristica = heuristicas.get(args.heuristica, heuristica_misplaced)
 
     algoritmos = {
-        #'backtracking': ("Backtracking", lambda: backtracking(puzzle, limite=20)),
+        'backtracking': ("Backtracking", lambda: backtracking(puzzle, limite=20)),
         'largura': ("Busca em Largura (BFS)", lambda: busca_largura(puzzle)),
         'profundidade': ("Busca em Profundidade Limitada", lambda: busca_profundidade_limitada(puzzle, limite=20)),
         'ordenada': ("Busca Ordenada (Uniform Cost)", lambda: busca_ordenada(puzzle)),
