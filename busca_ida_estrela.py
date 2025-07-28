@@ -4,38 +4,57 @@ import time
 
 def busca_ida_estrela(puzzle, heuristica=heuristica_misplaced):
     estat = Estatisticas()
+    estat.inicio = time.time()  # Inicializar timer de estatísticas
     N = puzzle.N
     limite = heuristica(puzzle)
-    caminho = [puzzle]
-    custo = 0
+    
     while True:
-        visitados = set()
-        temp = ida_star_visit(puzzle, 0, limite, caminho, estat, heuristica, custo, visitados)
-        if isinstance(temp, tuple) and temp[0]:
+        resultado = ida_star_visit(puzzle, 0, limite, [], estat, heuristica, 0)
+        
+        if isinstance(resultado, tuple):
+            # Solução encontrada
+            caminho, custo = resultado
             estat.fim = time.time()
-            return [p.estado for p in temp[0]], temp[1], estat
-        if temp == float('inf'):
+            return caminho, custo, estat
+        
+        if resultado == float('inf'):
+            # Não há solução
             estat.fim = time.time()
             return None, None, estat
-        limite = temp
+        
+        # Atualizar limite para próxima iteração
+        limite = resultado
 
-def ida_star_visit(no, g, limite, caminho, estat, heuristica, custo, visitados):
+def ida_star_visit(no, g, limite, caminho, estat, heuristica, custo):
     f = g + heuristica(no)
     if f > limite:
         return f
+    
     if no.is_goal():
-        return caminho, custo
+        return caminho + [no.estado], custo
+    
     min_limiar = float('inf')
     estat.nos_expandidos += 1
     estat.nos_visitados += 1
-    suc = no.sucessores()
-    estat.ramificacoes.append(len(suc))
-    for novo_estado, move_cost in suc:
+    
+    sucessores = no.sucessores()
+    estat.ramificacoes.append(len(sucessores))
+    
+    for novo_estado, move_cost in sucessores:
         novo = ReguaPuzzle(novo_estado, no.N)
-        if novo not in caminho:
-            res = ida_star_visit(novo, g + move_cost, limite, caminho + [novo], estat, heuristica, custo + move_cost, visitados)
-            if isinstance(res, tuple) and res[0]:
-                return res
-            if isinstance(res, (int, float)) and res < min_limiar:
-                min_limiar = res
+        
+        # Evitar ciclos - verificar se o estado já está no caminho atual
+        if novo_estado not in caminho:
+            novo_g = g + move_cost
+            novo_custo = custo + move_cost
+            
+            resultado = ida_star_visit(novo, novo_g, limite, caminho + [no.estado], estat, heuristica, novo_custo)
+            
+            if isinstance(resultado, tuple):
+                # Solução encontrada
+                return resultado
+            
+            if isinstance(resultado, (int, float)) and resultado < min_limiar:
+                min_limiar = resultado
+    
     return min_limiar 
