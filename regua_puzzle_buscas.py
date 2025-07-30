@@ -103,9 +103,9 @@ if __name__ == "__main__":
                         help="Estado inicial como string, ex: 'B A - A B'")
     parser.add_argument('-f', '--arquivo', type=str, default=None,
                         help="Arquivo com o estado inicial (linha única, ex: B A - A B)")
-    parser.add_argument('--heuristica', type=str, default='misplaced',
+    parser.add_argument('--heuristica', type=str, default='distancia',
                         help="Heurística: misplaced, distancia")
-    parser.add_argument('--salvar', action='store_true',
+    parser.add_argument('--salvar', action='store_true', default="store_true",
                         help="Salvar estatísticas da execução em arquivo JSON")
     parser.add_argument('--arquivo-log', type=str, default='execucao_log.json',
                         help="Nome do arquivo para salvar as estatísticas (padrão: execucao_log.json)")
